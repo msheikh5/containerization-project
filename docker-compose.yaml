@@ -1,0 +1,62 @@
+version: '3'
+services:
+  auth-services:
+    container_name: "auth"
+    image: auth:latest
+    ports:
+    - "8090:8090"
+    expose:
+      - 8090
+  data-access-services:
+    container_name: "data-access"
+    image: data-access:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - auth-services
+    expose:
+      - 8080
+  analytics_service:
+    container_name: "analytics-service"
+    image: analytics
+    ports:
+      - "8070:8070"
+    depends_on:
+      - mysql
+    expose:
+      - 8070
+  add-to-mongo-service:
+    container_name: "add-to-mongo"
+    image: add-to-mongo
+    ports:
+      - "8060:8060"
+    depends_on:
+      - mongo_db
+    expose:
+      - 8060
+  show-data-service:
+    container_name: "show-data"
+    image: show-data
+    ports:
+      - "8050:8050"
+    depends_on:
+      - mongo_db
+      - auth-service
+    expose:
+      - 8050
+  mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=Mohammad2001
+      - MYSQL_DATABASE=school
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+  mongo_db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    expose:
+      - 27017
